@@ -219,6 +219,25 @@ func (r *Reflection) Element() interface{} {
 	return r.element
 }
 
+func (r *Reflection) IsStruct() bool {
+	return r.t.Kind() == reflect.Struct || r.t.Kind() == reflect.Ptr
+}
+
+func (r *Reflection) IsScalar() bool {
+	return r.t.Kind() == reflect.Int ||
+		r.t.Kind() == reflect.String ||
+		r.t.Kind() == reflect.Bool ||
+		r.t.Kind() == reflect.Int8 ||
+		r.t.Kind() == reflect.Int16 ||
+		r.t.Kind() == reflect.Int32 ||
+		r.t.Kind() == reflect.Int64 ||
+		r.t.Kind() == reflect.Uint ||
+		r.t.Kind() == reflect.Uint8 ||
+		r.t.Kind() == reflect.Uint16 ||
+		r.t.Kind() == reflect.Uint32 ||
+		r.t.Kind() == reflect.Uint64
+}
+
 var defaultResolver = func(rec *Reflection, parameter any) (any, bool) {
 	tmp := rec.New()
 	if parameter != nil {

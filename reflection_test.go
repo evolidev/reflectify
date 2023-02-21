@@ -26,6 +26,26 @@ func TestInstanceOf(t *testing.T) {
 	})
 }
 
+func TestIsStruct(t *testing.T) {
+	refl := Reflect(TestStruct{})
+
+	result := refl.IsStruct()
+
+	if !result {
+		t.Errorf("Is struct should return true if reflected element is a struct")
+	}
+}
+
+func TestIsScalar(t *testing.T) {
+	refl := Reflect("")
+
+	result := refl.IsScalar()
+
+	if !result {
+		t.Errorf("Is scalar should return true if reflected element is a scalar type")
+	}
+}
+
 func TestFill(t *testing.T) {
 	t.Run("fill should fill none pointer struct", func(t *testing.T) {
 		refl := Reflect(TestStruct{})
