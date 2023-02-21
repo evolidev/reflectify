@@ -1,3 +1,6 @@
+![Build status](https://github.com/evolidev/reflectify/actions/workflows/main.yml/badge.svg)
+[![codecov](https://codecov.io/github/evolidev/reflectify/branch/main/graph/badge.svg?token=F1T68P1LVV)](https://codecov.io/github/evolidev/reflectify)
+
 # reflectify
 Simple reflect helper
 
