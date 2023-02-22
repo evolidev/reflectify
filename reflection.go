@@ -203,9 +203,9 @@ func (r *Reflection) Fill(input interface{}) interface{} {
 	elem := r.element
 
 	if !r.IsPointer() {
-		mapstructure.Decode(input, &elem)
+		mapstructure.WeakDecode(input, &elem)
 	} else {
-		mapstructure.Decode(input, elem)
+		mapstructure.WeakDecode(input, elem)
 	}
 
 	return elem
