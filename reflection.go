@@ -238,6 +238,48 @@ func (r *Reflection) IsScalar() bool {
 		r.t.Kind() == reflect.Uint64
 }
 
+func (r *Reflection) Methods() map[string]*Reflection {
+	result := make(map[string]*Reflection)
+
+	if r.t.Kind() == reflect.Func {
+		result[r.t.Name()] = r
+	}
+
+	for i := 0; i < r.t.NumMethod(); i++ {
+		m := r.t.Method(i)
+		tmp := Reflect(m.Func)
+		result[m.Name] = tmp
+	}
+
+	return result
+}
+
+func (r *Reflection) Params() []*Reflection {
+	result := make([]*Reflection, 0)
+
+	if r.t.Kind() != reflect.Func {
+		return result
+	}
+
+	cnt := 0
+
+	for cnt < r.t.NumIn() {
+		currentInputParam := Reflect(r.makeNewValueForInput(r.t.In(cnt)))
+		if cnt == 0 && r.HasReceiver() {
+			currentInputParam.isReceiver = true
+
+			cnt++
+			continue
+		}
+
+		cnt++
+
+		result = append(result, currentInputParam)
+	}
+
+	return result
+}
+
 var defaultResolver = func(rec *Reflection, parameter any) (any, bool) {
 	tmp := rec.New()
 	if parameter != nil {

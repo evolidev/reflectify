@@ -46,6 +46,55 @@ func TestIsScalar(t *testing.T) {
 	}
 }
 
+func TestMethods(t *testing.T) {
+	t.Run("Methods should return all struct methods", func(t *testing.T) {
+		refl := Reflect(TestStruct{})
+
+		methods := refl.Methods()
+
+		if len(methods) != 3 {
+			t.Errorf("Current len of %d does not match expected %d", len(methods), 3)
+		}
+	})
+
+	t.Run("Result of methods should be able to return input params", func(t *testing.T) {
+		refl := Reflect(TestStruct{})
+
+		methods := refl.Methods()
+
+		method := methods["TestWithScalarParam"]
+		params := method.Params()
+
+		if len(params) != 1 {
+			t.Errorf("given count %d of params are not matching expected %d", len(params), 1)
+		}
+
+		if !params[0].IsScalar() {
+			t.Errorf("wrong type assertion")
+		}
+	})
+
+	t.Run("Calling params on struct reflection should return empty result", func(t *testing.T) {
+		refl := Reflect(TestStruct{})
+
+		params := refl.Params()
+
+		if len(params) > 0 {
+			t.Errorf("params should be empty")
+		}
+	})
+
+	t.Run("Calling methods on a function should return it self", func(t *testing.T) {
+		refl := Reflect(func() {})
+
+		methods := refl.Methods()
+
+		if len(methods) != 1 {
+			t.Errorf("current len of %d does not match with expected %d", len(methods), 1)
+		}
+	})
+}
+
 func TestFill(t *testing.T) {
 	t.Run("fill should fill none pointer struct", func(t *testing.T) {
 		refl := Reflect(TestStruct{})
@@ -396,6 +445,18 @@ type TestStruct struct {
 }
 
 func (s TestStruct) Test() string {
+	return "hello"
+}
+
+func (s TestStruct) TestWithScalarParam(t string) string {
+	return "hello"
+}
+
+func (s TestStruct) TestWithMultiParam(ts *TestStruct2, t string) string {
+	return "hello"
+}
+
+func (s TestStruct) private() string {
 	return "hello"
 }
 
