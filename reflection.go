@@ -16,6 +16,9 @@ func Reflect(v any) *Reflection {
 	if _, ok := v.(reflect.Value); ok {
 		val = v.(reflect.Value)
 		t = val.Type()
+	} else if _, ok := v.(*Reflection); ok {
+		val = v.(*Reflection).v
+		t = v.(*Reflection).t
 	} else {
 		val = reflect.ValueOf(v)
 		t = reflect.TypeOf(v)

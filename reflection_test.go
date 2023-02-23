@@ -4,6 +4,18 @@ import (
 	"testing"
 )
 
+func TestReflectOfReflection(t *testing.T) {
+	refl := Reflect(func(test string) {})
+	refl2 := Reflect(refl)
+
+	if refl2.IsStruct() {
+		t.Errorf("reflected element should still be a func")
+	}
+	if len(refl2.Params()) != 1 {
+		t.Errorf("reflection should be the same")
+	}
+}
+
 func TestInstanceOf(t *testing.T) {
 	t.Run("instance of should return true if current reflected struct is of the same type", func(t *testing.T) {
 		tmp := Reflect(TestStruct{})
