@@ -71,6 +71,15 @@ func (r *Reflection) Call(parameters ...interface{}) []reflect.Value {
 
 	callParams := r.buildInputParameters(parameters)
 
+	for _, param := range callParams {
+		if _, ok := param.Interface().(error); ok {
+			result := make([]reflect.Value, 2)
+			result[1] = param
+
+			return result
+		}
+	}
+
 	return r.v.Call(callParams)
 }
 

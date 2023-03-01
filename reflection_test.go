@@ -1,6 +1,7 @@
 package reflectify
 
 import (
+	"errors"
 	"testing"
 )
 
@@ -224,6 +225,23 @@ func TestCall(t *testing.T) {
 
 		if result[0].Int() != 5 {
 			t.Errorf("current value '%d' given. expected: %d", result[0].Int(), 5)
+		}
+	})
+
+	t.Run("if resolver returns an error then it should be returned", func(t *testing.T) {
+		refl := Reflect(func(testStruct *TestStruct, tmp int) int { return tmp })
+		refl.AddResolver(func(definition *Reflection, param any) (any, bool) {
+			return errors.New("failed"), true
+		})
+
+		result := refl.Call(5)
+
+		if len(result) != 2 {
+			t.Errorf("expected results should be of length %d. Current length: %d", 2, len(result))
+		}
+
+		if _, ok := result[1].Interface().(error); !ok {
+			t.Errorf("expected error as 2nd result. %v given", result[1].Interface())
 		}
 	})
 
