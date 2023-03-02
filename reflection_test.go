@@ -108,6 +108,43 @@ func TestMethods(t *testing.T) {
 	})
 }
 
+func TestMethodByName(t *testing.T) {
+	t.Run("method by name should return the method of the struct", func(t *testing.T) {
+		refl := Reflect(TestStruct{})
+
+		method := refl.MethodByName("TestWithScalarParam")
+
+		if method == nil {
+			t.Errorf("Method should exists")
+		}
+	})
+
+	t.Run("method by name should return the method if reflected element is a func", func(t *testing.T) {
+		refl := Reflect(func() string { return "test" })
+
+		method := refl.MethodByName("TestWithScalarParam")
+		if method == nil {
+			t.Errorf("func should exists either way")
+		}
+
+		result := method.Call()
+
+		if result[0].String() != "test" {
+			t.Errorf("method could not be called")
+		}
+	})
+
+	t.Run("method by name should return nil if method does not exists", func(t *testing.T) {
+		refl := Reflect(TestStruct{})
+
+		method := refl.MethodByName("DoesNotExists")
+
+		if method != nil {
+			t.Errorf("Method should be nil")
+		}
+	})
+}
+
 func TestFill(t *testing.T) {
 	t.Run("fill should fill none pointer struct", func(t *testing.T) {
 		refl := Reflect(TestStruct{})

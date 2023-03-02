@@ -292,6 +292,18 @@ func (r *Reflection) Params() []*Reflection {
 	return result
 }
 
+func (r *Reflection) MethodByName(name string) *Reflection {
+	if r.t.Kind() == reflect.Func {
+		return r
+	}
+
+	if method, found := r.t.MethodByName(name); found {
+		return Reflect(method.Func)
+	}
+
+	return nil
+}
+
 var defaultResolver = func(rec *Reflection, parameter any) (any, bool) {
 	tmp := rec.New()
 	if parameter != nil {
