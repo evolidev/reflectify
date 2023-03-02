@@ -85,13 +85,13 @@ func (r *Reflection) Call(parameters ...interface{}) []reflect.Value {
 
 func (r *Reflection) CallMethod(s string, parameters ...interface{}) []reflect.Value {
 	if r.t.Kind() == reflect.Func {
-		return r.Call(parameters)
+		return r.Call(parameters...)
 	}
 
 	m := r.v.MethodByName(s)
 	refl := Reflect(m)
 
-	return refl.Call(parameters)
+	return refl.Call(parameters...)
 }
 
 func (r *Reflection) HasReceiver() bool {

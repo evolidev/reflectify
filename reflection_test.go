@@ -347,6 +347,18 @@ func TestCallMethod(t *testing.T) {
 			t.Errorf("func not called")
 		}
 	})
+
+	t.Run("if parameter is a struct than it should be passed to through", func(t *testing.T) {
+		refl := Reflect(func(testStruct *TestStruct) string {
+			return testStruct.Field1
+		})
+
+		result := refl.CallMethod("Handle", &TestStruct{Field1: "test"})
+
+		if result[0].String() != "test" {
+			t.Errorf("func not called")
+		}
+	})
 }
 
 func TestReceiver(t *testing.T) {
