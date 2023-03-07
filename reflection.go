@@ -188,7 +188,7 @@ func (r *Reflection) buildInputParameters(parameters []interface{}) []reflect.Va
 func (r *Reflection) InstanceOf(instance interface{}) bool {
 	refl := Reflect(instance)
 
-	match := refl.Name() == r.Name()
+	match := refl.FullName() == r.FullName()
 
 	if match {
 		if r.t.Kind() == reflect.Ptr {
@@ -302,6 +302,28 @@ func (r *Reflection) MethodByName(name string) *Reflection {
 	}
 
 	return nil
+}
+
+func (r *Reflection) FullName() string {
+	if r.t.Kind() == reflect.Ptr {
+		elem := r.v.Elem().Interface()
+		refl := Reflect(elem)
+
+		return refl.FullName()
+	}
+
+	if r.t.Kind() == reflect.Func && r.HasReceiver() {
+		path := r.t.In(0).PkgPath()
+		path += "/" + r.t.In(0).Name() + ":" + r.Name()
+
+		return path
+	}
+
+	if r.t.Kind() == reflect.Func {
+		return runtime.FuncForPC(r.v.Pointer()).Name()
+	}
+
+	return r.t.PkgPath() + "/" + r.Name()
 }
 
 var defaultResolver = func(rec *Reflection, parameter any) (any, bool) {

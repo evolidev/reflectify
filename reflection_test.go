@@ -2,6 +2,7 @@ package reflectify
 
 import (
 	"errors"
+	"strings"
 	"testing"
 )
 
@@ -328,6 +329,52 @@ func TestCall(t *testing.T) {
 
 		if !called {
 			t.Errorf("func got not called")
+		}
+	})
+}
+
+func TestFullName(t *testing.T) {
+	t.Run("fullname should prepend package path", func(t *testing.T) {
+		refl := Reflect(TestStruct{})
+
+		fullName := refl.FullName()
+
+		expected := "github.com/evolidev/reflectify/TestStruct"
+		if fullName != expected {
+			t.Errorf("name expected to be '%s'. '%s' given", expected, fullName)
+		}
+	})
+
+	t.Run("fullname should prepend package path even for pointer", func(t *testing.T) {
+		refl := Reflect(&TestStruct{})
+
+		fullName := refl.FullName()
+
+		expected := "github.com/evolidev/reflectify/TestStruct"
+		if fullName != expected {
+			t.Errorf("name expected to be '%s'. '%s' given", expected, fullName)
+		}
+	})
+
+	t.Run("fullname should prepend package path even for func", func(t *testing.T) {
+		refl := Reflect(TestStruct.TestWithMultiParam)
+
+		fullName := refl.FullName()
+
+		expected := "github.com/evolidev/reflectify/TestStruct:TestWithMultiParam"
+		if fullName != expected {
+			t.Errorf("name expected to be '%s'. '%s' given", expected, fullName)
+		}
+	})
+
+	t.Run("fullname should prepend package path and even for anonymous functions", func(t *testing.T) {
+		refl := Reflect(func() {})
+
+		fullName := refl.FullName()
+
+		expected := "github.com/evolidev/reflectify.TestFullName.func"
+		if !strings.Contains(fullName, expected) {
+			t.Errorf("name expected to be '%s'. '%s' given", expected, fullName)
 		}
 	})
 }
